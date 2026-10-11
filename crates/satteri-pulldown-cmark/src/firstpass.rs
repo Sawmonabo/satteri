@@ -3769,12 +3769,6 @@ impl<'a, 'b> FirstPass<'a, 'b> {
         }
         i += 1;
         self.finish_list(start);
-        if let Some(node_ix) = self.tree.peek_up()
-            && let ItemBody::FootnoteDefinition(..) = self.tree[node_ix].item.body
-        {
-            // finish previous footnote if it's still open
-            self.pop(start);
-        }
         i += scan_space_or_tab(&bytes[i..]);
         self.allocs
             .footdefs

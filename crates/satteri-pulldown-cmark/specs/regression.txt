@@ -3205,3 +3205,19 @@ Fewer columns leave the task list marker in place.
 <li class="task-list-item"><input type="checkbox" checked disabled> -</li>
 </ul>
 ````````````````````````````````
+
+The domain of a literal autolink ends at Unicode punctuation or a symbol, as in
+micromark, so an `_` after one is part of the path, where only a trailing `_` is
+trimmed. `http://—x` has an empty domain, so it doesn't link.
+
+```````````````````````````````` example
+www.—_×_
+
+https://a.b×_c_
+
+http://—x
+.
+<p><a href="http://www.%E2%80%94_%C3%97">www.—_×</a>_</p>
+<p><a href="https://a.b%C3%97_c">https://a.b×_c</a>_</p>
+<p>http://—x</p>
+````````````````````````````````
