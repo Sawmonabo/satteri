@@ -163,6 +163,8 @@ const tree = materializeMdastTree(new MdastReader(bytes));
 
 `satteri/hast-reader` and `satteri/hast-materializer` do the same for HAST.
 
+To read only a few nodes of a parsed tree, such as the root's children and their positions, `walkMdastHandle(handle, subscriptions)` returns the nodes of the subscribed types without serializing the whole tree. Its result is the buffer the visitors read.
+
 ## Reparsing raw HTML (`rawHtml`)
 
 By default, inline and block HTML in Markdown is preserved as opaque `raw` nodes and re-emitted verbatim. Pass `features: { rawHtml: true }` to reparse it into structured HAST:
