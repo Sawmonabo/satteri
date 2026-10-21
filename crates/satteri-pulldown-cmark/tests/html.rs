@@ -400,3 +400,52 @@ fn many_unclosed_parenthesized_titles_stay_linear() {
         parse_to_html(&format!("{unclosed}\n\n[b](y (t))\n"))
     );
 }
+
+#[test]
+fn indented_code_after_the_line_that_closed_a_container_is_one_block() {
+    // The line that closes the list or blockquote holds some other block, so the code that
+    // follows on a later line is no lazy line and keeps its blank and further lines.
+    let cases = [
+        (
+            "- a\n\n\n***\n    code\n\n    more\n",
+            "<ul>\n<li>a</li>\n</ul>\n<hr>\n<pre><code>code\n\nmore\n</code></pre>\n",
+        ),
+        (
+            "a\n\n***\n    code\n\n    more\n",
+            "<p>a</p>\n<hr>\n<pre><code>code\n\nmore\n</code></pre>\n",
+        ),
+        (
+            "- a\n***\n    code\n    more\n",
+            "<ul>\n<li>a</li>\n</ul>\n<hr>\n<pre><code>code\nmore\n</code></pre>\n",
+        ),
+        (
+            "- a\n# h\n    code\n\n    more\n",
+            "<ul>\n<li>a</li>\n</ul>\n<h1>h</h1>\n<pre><code>code\n\nmore\n</code></pre>\n",
+        ),
+        (
+            "> a\n```\nx\n```\n    code\n\n    more\n",
+            "<blockquote>\n<p>a</p>\n</blockquote>\n<pre><code>x\n</code></pre>\n<pre><code>code\n\nmore\n</code></pre>\n",
+        ),
+        // The closing line opens a new container, and the code inside it is no lazy line either.
+        (
+            "- a\n>     code\n>\n>     more\n",
+            "<ul>\n<li>a</li>\n</ul>\n<blockquote>\n<pre><code>code\n\nmore\n</code></pre>\n</blockquote>\n",
+        ),
+    ];
+    for (input, expected) in cases {
+        assert_eq!(expected, parse_to_html(input), "input: {input:?}");
+    }
+}
+
+#[test]
+fn indented_code_on_the_line_that_closed_a_container_is_one_line() {
+    // micromark's lazy-line rule: code that starts on the closing line ends at that line.
+    assert_eq!(
+        "<blockquote>\n</blockquote>\n<pre><code>bar\n</code></pre>\n<pre><code>baz\n</code></pre>\n",
+        parse_to_html(">\n    bar\n    baz\n")
+    );
+    assert_eq!(
+        "<ul>\n<li></li>\n</ul>\n<pre><code>bar\n</code></pre>\n<pre><code>baz\n</code></pre>\n",
+        parse_to_html("*\n\n    bar\n    baz\n")
+    );
+}
