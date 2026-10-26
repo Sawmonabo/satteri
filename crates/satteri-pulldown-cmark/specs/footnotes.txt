@@ -852,3 +852,23 @@ x[^1]
 </ol>
 </section>
 ````````````````````````````````
+
+A footnote label can't hold whitespace, so `[^a b]` is a link label like any
+other, and `[^a b]:` starts a link reference definition, which can't interrupt
+a paragraph.
+
+```````````````````````````````` example
+x[^a b] ![^a b] [y][^a b]
+
+[^a b]: /u
+.
+<p>x<a href="/u">^a b</a> <img src="/u" alt="^a b"> <a href="/u">y</a></p>
+````````````````````````````````
+
+```````````````````````````````` example
+a
+[^a b]: /u
+.
+<p>a
+[^a b]: /u</p>
+````````````````````````````````

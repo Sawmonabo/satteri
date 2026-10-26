@@ -2385,12 +2385,7 @@ impl<'input> ParserInner<'input> {
         else {
             return false;
         };
-        // micromark ends a footnote call at whitespace, where the shared label scan collapses it.
-        len == label_text.len()
-            && !label_text.as_bytes()[..len]
-                .iter()
-                .any(|b| matches!(b, b' ' | b'\t' | b'\n' | b'\r'))
-            && self.allocs.footdefs.contains(&label)
+        len == label_text.len() && self.allocs.footdefs.contains(&label)
     }
 
     /// Returns next byte index, url and title.
@@ -3185,6 +3180,10 @@ fn scan_link_label<'text>(
         let linebreak_handler: &dyn Fn(&[u8]) -> Option<usize> = &|_| None;
         if let Some((byte_index, cow)) =
             scan_link_label_rest(&text[2..], linebreak_handler, tree.is_in_table())
+            // micromark ends a footnote label at whitespace, leaving `[^a b]` a link label.
+            && !bytes[2..byte_index + 1]
+                .iter()
+                .any(|&b| matches!(b, b' ' | b'\t'))
         {
             return Some((byte_index + 2, ReferenceLabel::Footnote(cow)));
         }

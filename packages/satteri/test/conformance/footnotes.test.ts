@@ -178,6 +178,14 @@ describe("GFM footnote semantics conformance (vs remark-rehype)", () => {
     assertFootnoteHastConformance("Text[^a b].\n\n[^a b]: Spaced id.\n");
   });
 
+  test("a label containing a space is a link reference", () => {
+    assertFootnoteHastConformance("x[^a b] ![^a b] [y][^a b]\n\n[^a b]: /u\n");
+  });
+
+  test("a definition whose label contains a space can't interrupt a paragraph", () => {
+    assertFootnoteHastConformance("a\n[^a b]: /u\n\nx[^a b]\n");
+  });
+
   test("duplicate definitions keep the first", () => {
     assertFootnoteHastConformance("Text[^a].\n\n[^a]: First wins.\n\n[^a]: Second loses.\n");
   });

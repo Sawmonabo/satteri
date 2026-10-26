@@ -864,3 +864,27 @@ fn footnotes_test_31() {
 
     test_markdown_html(original, expected, 2052, false, false, false, false, false, false);
 }
+
+#[test]
+fn footnotes_test_32() {
+    let original = r##"x[^a b] ![^a b] [y][^a b]
+
+[^a b]: /u
+"##;
+    let expected = r##"<p>x<a href="/u">^a b</a> <img src="/u" alt="^a b"> <a href="/u">y</a></p>
+"##;
+
+    test_markdown_html(original, expected, 2052, false, false, false, false, false, false);
+}
+
+#[test]
+fn footnotes_test_33() {
+    let original = r##"a
+[^a b]: /u
+"##;
+    let expected = r##"<p>a
+[^a b]: /u</p>
+"##;
+
+    test_markdown_html(original, expected, 2052, false, false, false, false, false, false);
+}
